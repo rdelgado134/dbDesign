@@ -1,0 +1,40 @@
+==================================================
+        JAVA FX + DB PROJECT CHEAT SHEET
+==================================================
+
+PREREQUISITES:
+- Java JDK 17 or 21 installed.
+- No need to install Maven manually (we use the wrapper script).
+
+--------------------------------------------------
+HOW TO RUN THE APPLICATION (Main Command):
+--------------------------------------------------
+Windows (PowerShell / Terminal):
+  .\mvnw clean javafx:run
+
+Mac / Linux:
+  ./mvnw clean javafx:run
+
+--------------------------------------------------
+OTHER USEFUL COMMANDS:
+--------------------------------------------------
+1. Test / Verify (Runs unit tests):
+   Windows:   .\mvnw test
+   Mac/Linux: ./mvnw test
+
+2. Quick Compile (Checks for syntax/import errors):
+   Windows:   .\mvnw compile
+   Mac/Linux: ./mvnw compile
+
+3. Reset Build (Fixes weird errors or stuck builds):
+   Windows:   .\mvnw clean
+   Mac/Linux: ./mvnw clean
+
+--------------------------------------------------
+TROUBLESHOOTING / VS CODE TIPS:
+--------------------------------------------------
+- If VS Code shows red underline errors after adding libraries to pom.xml:
+  Run: .\mvnw clean compile
+
+- Permission denied on Mac/Linux when running ./mvnw?
+  Run: chmod +x mvnw
