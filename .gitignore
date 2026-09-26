@@ -1,0 +1,17 @@
+# Maven build directory
+target/
+
+# IDE files
+.vscode/
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Database files (optional and possibly temporary)
+*.db
+*.sqlite

@@ -12,3 +12,12 @@ SQL injection should be prevented.
 Duplicate username, email and phone must be detected and signup should fail.
 
 Unmatching passwords should be detected as well. 
+
+## Developer tooling install
+- JDK version 21 or newer.
+   
+- Maven:
+
+      - windows users: run .\mvnw clean javafx:run
+
+      - mac users: run ./mvnw clean javafx:run
