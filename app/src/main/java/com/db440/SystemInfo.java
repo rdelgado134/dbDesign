@@ -1,4 +1,4 @@
-package com.mycompany;
+package com.db440;
 
 public class SystemInfo {
 

@@ -1,4 +1,4 @@
-package com.mycompany;
+package com.db440;
 
 import javafx.application.Application;
 import javafx.scene.Scene;

@@ -1,4 +1,4 @@
-module com.mycompany {
+module com.db440 {
     requires javafx.controls;
-    exports com.mycompany;
+    exports com.db440;
 }
