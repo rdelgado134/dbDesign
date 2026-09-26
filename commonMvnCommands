@@ -10,7 +10,7 @@ PREREQUISITES:
 HOW TO RUN THE APPLICATION (Main Command):
 --------------------------------------------------
 Windows (PowerShell / Terminal):
-  .\mvnw clean javafx:run
+  .\mvnw.cmd clean javafx:run
 
 Mac / Linux:
   ./mvnw clean javafx:run
@@ -19,15 +19,15 @@ Mac / Linux:
 OTHER USEFUL COMMANDS:
 --------------------------------------------------
 1. Test / Verify (Runs unit tests):
-   Windows:   .\mvnw test
+   Windows:   .\mvnw.cmd test
    Mac/Linux: ./mvnw test
 
 2. Quick Compile (Checks for syntax/import errors):
-   Windows:   .\mvnw compile
+   Windows:   .\mvnw.cmd compile
    Mac/Linux: ./mvnw compile
 
 3. Reset Build (Fixes weird errors or stuck builds):
-   Windows:   .\mvnw clean
+   Windows:   .\mvnw.cmd clean
    Mac/Linux: ./mvnw clean
 
 --------------------------------------------------
