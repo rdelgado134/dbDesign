@@ -21,3 +21,17 @@ Unmatching passwords should be detected as well.
       - windows users: run .\mvnw clean javafx:run
 
       - mac users: run ./mvnw clean javafx:run
+
+### Project directory structure
+This project follows the standard Maven directory layout. Here is a quick overview of what each folder does:
+
+```text
+app/
+├── .mvn/                  # Maven Wrapper files (ensures everyone uses the same Maven version)
+├── src/
+│   └── main/
+│       ├── java/          # All Java source code (.java files)
+│       └── resources/     # Non-code assets (images, CSS styles, SQL scripts, FXML if used)
+├── target/                # Automatically generated build output (ignored by Git)
+├── mvnw / mvnw.cmd        # Wrapper executable scripts for running the project
+└── pom.xml                # Main project configuration (dependencies, plugins, database drivers)
