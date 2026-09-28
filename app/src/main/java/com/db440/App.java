@@ -1,9 +1,11 @@
 package com.db440;
 
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.layout.StackPane;
+//import javafx.scene.control.Label;
+//import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 
@@ -12,19 +14,17 @@ import javafx.stage.Stage;
  */
 public class App extends Application {
 
-    @Override
-    public void start(Stage stage) {
-        var javaVersion = SystemInfo.javaVersion();
-        var javafxVersion = SystemInfo.javafxVersion();
-
-        var label = new Label("Hello, JavaFX " + javafxVersion + ", running on Java " + javaVersion + ".");
-        var scene = new Scene(new StackPane(label), 640, 480);
-        stage.setScene(scene);
-        stage.show();
-    }
-
     public static void main(String[] args) {
         launch();
+    }
+
+    @Override
+    public void start(Stage stage) throws Exception {
+        System.out.println(getClass());
+        Parent root = FXMLLoader.load(getClass().getResource("/fxml/registration_form.fxml"));
+        stage.setTitle("User Registration");
+        stage.setScene(new Scene(root, 800, 500));
+        stage.show();
     }
 
 }

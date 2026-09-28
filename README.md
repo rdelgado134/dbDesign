@@ -18,7 +18,7 @@ Unmatching passwords should be detected as well.
    
 - Maven:
 
-      - windows users: run .\mvnw clean javafx:run
+      - windows users: run .\mvnw.cmd clean javafx:run
 
       - mac users: run ./mvnw clean javafx:run
 
