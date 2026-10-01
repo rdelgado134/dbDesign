@@ -11,7 +11,10 @@ public class JdbcDao {
 
     // Defaults match a local MySQL with root/root. Set DB_USERNAME / DB_PASSWORD
     // environment variables to override without editing this file.
-    private static final String DATABASE_URL = "jdbc:mysql://localhost:3306/comp440?useSSL=false";
+    // allowPublicKeyRetrieval lets MySQL 8's default caching_sha2_password login work
+    // without SSL. Fine for a local dev database.
+    private static final String DATABASE_URL =
+        "jdbc:mysql://localhost:3306/comp440?useSSL=false&allowPublicKeyRetrieval=true";
     private static final String DATABASE_USERNAME = envOrDefault("DB_USERNAME", "root");
     private static final String DATABASE_PASSWORD = envOrDefault("DB_PASSWORD", "root");
     private static final String INSERT_QUERY = "INSERT INTO registration (full_name, email_id, password) VALUES (?, ?, ?)";
