@@ -1,5 +1,6 @@
 package com.db440;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Optional;
 
@@ -60,8 +61,19 @@ public class LoginController {
             return;
         }
 
-        showAlert(Alert.AlertType.INFORMATION, owner, "Login Successful!",
-            "Welcome " + username);
+        try {
+            WelcomeController welcome = App.setRoot("welcome");
+            welcome.setUser(username);
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, owner, "Error!",
+                "Could not open the welcome page.");
+        }
+    }
+
+    @FXML
+    public void goToRegistration(ActionEvent event) throws IOException {
+        App.setRoot("registration_form");
     }
 
     private static void showAlert(Alert.AlertType alertType, Window owner, String title, String message) {

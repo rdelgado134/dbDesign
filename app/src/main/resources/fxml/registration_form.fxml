@@ -6,6 +6,7 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
 <GridPane fx:controller="com.db440.RegistrationController"
     xmlns:fx="http://javafx.com/fxml" alignment="center"
           hgap="10" vgap="10">
@@ -58,4 +59,9 @@
             <Insets top="20" right="0" bottom="20" left="0"></Insets>
         </GridPane.margin>
     </Button>
+    <!-- Add Link Back to Login -->
+    <Hyperlink text="Already have an account? Log in"
+               GridPane.columnIndex="0" GridPane.rowIndex="5"
+               GridPane.columnSpan="2" GridPane.halignment="CENTER"
+               onAction="#goToLogin"/>
 </GridPane>

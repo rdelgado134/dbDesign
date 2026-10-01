@@ -6,6 +6,7 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
 <GridPane fx:controller="com.db440.LoginController"
     xmlns:fx="http://javafx.com/fxml" alignment="center"
           hgap="10" vgap="10">
@@ -49,7 +50,12 @@
             GridPane.halignment="CENTER"
             onAction="#login">
         <GridPane.margin>
-            <Insets top="20" right="0" bottom="20" left="0"></Insets>
+            <Insets top="20" right="0" bottom="0" left="0"></Insets>
         </GridPane.margin>
     </Button>
+    <!-- Add Link to Registration -->
+    <Hyperlink text="Don't have an account? Create one"
+               GridPane.columnIndex="0" GridPane.rowIndex="4"
+               GridPane.columnSpan="2" GridPane.halignment="CENTER"
+               onAction="#goToRegistration"/>
 </GridPane>
