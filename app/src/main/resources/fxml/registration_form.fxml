@@ -9,59 +9,76 @@
 <?import javafx.scene.control.Hyperlink?>
 <GridPane fx:controller="com.db440.RegistrationController"
     xmlns:fx="http://javafx.com/fxml" alignment="center"
-          hgap="10" vgap="10">
+          hgap="10" vgap="8">
     <padding>
-        <Insets top="40" right="40" bottom="40" left="40"/>
+        <Insets top="20" right="40" bottom="20" left="40"/>
     </padding>
     <columnConstraints>
-        <ColumnConstraints minWidth="100" prefWidth="100"
+        <ColumnConstraints minWidth="140" prefWidth="140"
                            maxWidth="Infinity" halignment="RIGHT"></ColumnConstraints>
-        <ColumnConstraints minWidth="200" prefWidth="200"
+        <ColumnConstraints minWidth="200" prefWidth="250"
                            maxWidth="Infinity" hgrow="ALWAYS"></ColumnConstraints>
     </columnConstraints>
     <!-- Add Header Label -->
-    <Label text="Registration Form (FXML)" GridPane.columnIndex="0" 
-           GridPane.rowIndex="0" GridPane.columnSpan="2" 
+    <Label text="Sign Up" GridPane.columnIndex="0"
+           GridPane.rowIndex="0" GridPane.columnSpan="2"
            GridPane.rowSpan="1" GridPane.halignment="CENTER" >
         <font>
             <Font name="Arial" size="24" ></Font>
         </font>
         <GridPane.margin>
-            <Insets top="20" right="0" bottom="20" left="0"></Insets>
+            <Insets top="0" right="0" bottom="10" left="0"></Insets>
         </GridPane.margin>
     </Label>
-    <!-- Add Name Label -->
-    <Label text="Full Name : " GridPane.columnIndex="0" 
+    <!-- Add Username -->
+    <Label text="Username : " GridPane.columnIndex="0"
            GridPane.rowIndex="1" ></Label>
-    <!-- Add Name Text Field -->
-    <TextField fx:id="fullNameField" prefHeight="40" 
+    <TextField fx:id="usernameField" prefHeight="30"
                GridPane.columnIndex="1" GridPane.rowIndex="1"/>
-    <!-- Add Email Label -->
-    <Label text="Email ID : " GridPane.columnIndex="0" 
+    <!-- Add Password -->
+    <Label text="Password : " GridPane.columnIndex="0"
            GridPane.rowIndex="2" ></Label>
-    <!-- Add Email Text Field -->
-    <TextField fx:id="emailIdField" prefHeight="40" 
-               GridPane.columnIndex="1" GridPane.rowIndex="2"/>
-    <!-- Add Password Label -->
-    <Label text="Password : " GridPane.columnIndex="0" 
+    <PasswordField fx:id="passwordField" prefHeight="30"
+                   GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+    <!-- Add Confirm Password -->
+    <Label text="Confirm Password : " GridPane.columnIndex="0"
            GridPane.rowIndex="3" ></Label>
-    <!-- Add Password Field -->
-    <PasswordField fx:id="passwordField" prefHeight="40" 
+    <PasswordField fx:id="confirmPasswordField" prefHeight="30"
                    GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+    <!-- Add First Name -->
+    <Label text="First Name : " GridPane.columnIndex="0"
+           GridPane.rowIndex="4" ></Label>
+    <TextField fx:id="firstNameField" prefHeight="30"
+               GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+    <!-- Add Last Name -->
+    <Label text="Last Name : " GridPane.columnIndex="0"
+           GridPane.rowIndex="5" ></Label>
+    <TextField fx:id="lastNameField" prefHeight="30"
+               GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+    <!-- Add Email -->
+    <Label text="Email : " GridPane.columnIndex="0"
+           GridPane.rowIndex="6" ></Label>
+    <TextField fx:id="emailField" prefHeight="30"
+               GridPane.columnIndex="1" GridPane.rowIndex="6"/>
+    <!-- Add Phone -->
+    <Label text="Phone : " GridPane.columnIndex="0"
+           GridPane.rowIndex="7" ></Label>
+    <TextField fx:id="phoneField" prefHeight="30"
+               GridPane.columnIndex="1" GridPane.rowIndex="7"/>
     <!-- Add Submit Button -->
-    <Button fx:id="submitButton" text="Submit"
-            prefWidth="100" prefHeight="40" defaultButton="true"
-            GridPane.columnIndex="0" GridPane.rowIndex="4"
+    <Button fx:id="submitButton" text="Sign Up"
+            prefWidth="100" prefHeight="35" defaultButton="true"
+            GridPane.columnIndex="0" GridPane.rowIndex="8"
             GridPane.columnSpan="2" GridPane.rowSpan="1"
             GridPane.halignment="CENTER"
             onAction="#register">
         <GridPane.margin>
-            <Insets top="20" right="0" bottom="20" left="0"></Insets>
+            <Insets top="10" right="0" bottom="0" left="0"></Insets>
         </GridPane.margin>
     </Button>
     <!-- Add Link Back to Login -->
     <Hyperlink text="Already have an account? Log in"
-               GridPane.columnIndex="0" GridPane.rowIndex="5"
+               GridPane.columnIndex="0" GridPane.rowIndex="9"
                GridPane.columnSpan="2" GridPane.halignment="CENTER"
                onAction="#goToLogin"/>
 </GridPane>
