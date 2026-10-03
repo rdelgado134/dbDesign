@@ -17,8 +17,6 @@ public class JdbcDao {
         "jdbc:mysql://localhost:3306/comp440?useSSL=false&allowPublicKeyRetrieval=true";
     private static final String DATABASE_USERNAME = envOrDefault("DB_USERNAME", "root");
     private static final String DATABASE_PASSWORD = envOrDefault("DB_PASSWORD", "root");
-    private static final String INSERT_QUERY = "INSERT INTO registration (full_name, email_id, password) VALUES (?, ?, ?)";
-
     // All user queries are fixed strings with ? placeholders; user input is only
     // ever bound through PreparedStatement.setString, which prevents SQL injection.
     private static final String INSERT_USER_QUERY =
@@ -84,21 +82,6 @@ public class JdbcDao {
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 return resultSet.next();
             }
-        }
-    }
-
-    /**
-     * @deprecated Template leftover that writes to a table not in comp440.
-     * Use {@link #insertUser} instead; remove once RegistrationController is updated.
-     */
-    @Deprecated
-    public void insertRecord(String fullName, String emailId, String password) throws SQLException {
-        try (Connection connection = getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(INSERT_QUERY)) {
-            preparedStatement.setString(1, fullName);
-            preparedStatement.setString(2, emailId);
-            preparedStatement.setString(3, password);
-            preparedStatement.executeUpdate();
         }
     }
 
