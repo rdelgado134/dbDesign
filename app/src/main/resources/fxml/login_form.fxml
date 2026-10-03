@@ -7,7 +7,7 @@
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Hyperlink?>
-<GridPane fx:controller="com.db440.RegistrationController"
+<GridPane fx:controller="com.db440.LoginController"
     xmlns:fx="http://javafx.com/fxml" alignment="center"
           hgap="10" vgap="10">
     <padding>
@@ -20,8 +20,8 @@
                            maxWidth="Infinity" hgrow="ALWAYS"></ColumnConstraints>
     </columnConstraints>
     <!-- Add Header Label -->
-    <Label text="Registration Form (FXML)" GridPane.columnIndex="0" 
-           GridPane.rowIndex="0" GridPane.columnSpan="2" 
+    <Label text="Login" GridPane.columnIndex="0"
+           GridPane.rowIndex="0" GridPane.columnSpan="2"
            GridPane.rowSpan="1" GridPane.halignment="CENTER" >
         <font>
             <Font name="Arial" size="24" ></Font>
@@ -30,38 +30,32 @@
             <Insets top="20" right="0" bottom="20" left="0"></Insets>
         </GridPane.margin>
     </Label>
-    <!-- Add Name Label -->
-    <Label text="Full Name : " GridPane.columnIndex="0" 
+    <!-- Add Username Label -->
+    <Label text="Username : " GridPane.columnIndex="0"
            GridPane.rowIndex="1" ></Label>
-    <!-- Add Name Text Field -->
-    <TextField fx:id="fullNameField" prefHeight="40" 
+    <!-- Add Username Text Field -->
+    <TextField fx:id="usernameField" prefHeight="40"
                GridPane.columnIndex="1" GridPane.rowIndex="1"/>
-    <!-- Add Email Label -->
-    <Label text="Email ID : " GridPane.columnIndex="0" 
-           GridPane.rowIndex="2" ></Label>
-    <!-- Add Email Text Field -->
-    <TextField fx:id="emailIdField" prefHeight="40" 
-               GridPane.columnIndex="1" GridPane.rowIndex="2"/>
     <!-- Add Password Label -->
-    <Label text="Password : " GridPane.columnIndex="0" 
-           GridPane.rowIndex="3" ></Label>
+    <Label text="Password : " GridPane.columnIndex="0"
+           GridPane.rowIndex="2" ></Label>
     <!-- Add Password Field -->
-    <PasswordField fx:id="passwordField" prefHeight="40" 
-                   GridPane.columnIndex="1" GridPane.rowIndex="3"/>
-    <!-- Add Submit Button -->
-    <Button fx:id="submitButton" text="Submit"
+    <PasswordField fx:id="passwordField" prefHeight="40"
+                   GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+    <!-- Add Login Button -->
+    <Button fx:id="loginButton" text="Login"
             prefWidth="100" prefHeight="40" defaultButton="true"
-            GridPane.columnIndex="0" GridPane.rowIndex="4"
+            GridPane.columnIndex="0" GridPane.rowIndex="3"
             GridPane.columnSpan="2" GridPane.rowSpan="1"
             GridPane.halignment="CENTER"
-            onAction="#register">
+            onAction="#login">
         <GridPane.margin>
-            <Insets top="20" right="0" bottom="20" left="0"></Insets>
+            <Insets top="20" right="0" bottom="0" left="0"></Insets>
         </GridPane.margin>
     </Button>
-    <!-- Add Link Back to Login -->
-    <Hyperlink text="Already have an account? Log in"
-               GridPane.columnIndex="0" GridPane.rowIndex="5"
+    <!-- Add Link to Registration -->
+    <Hyperlink text="Don't have an account? Create one"
+               GridPane.columnIndex="0" GridPane.rowIndex="4"
                GridPane.columnSpan="2" GridPane.halignment="CENTER"
-               onAction="#goToLogin"/>
+               onAction="#goToRegistration"/>
 </GridPane>

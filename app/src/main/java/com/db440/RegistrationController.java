@@ -1,5 +1,6 @@
 package com.db440;
 
+import java.io.IOException;
 import java.sql.SQLException;
 
 import javafx.event.ActionEvent;
@@ -59,6 +60,11 @@ public class RegistrationController {
 
         showAlert(Alert.AlertType.CONFIRMATION, owner, "Registration Successful!",
             "Welcome " + fullNameField.getText());
+    }
+
+    @FXML
+    public void goToLogin(ActionEvent event) throws IOException {
+        App.setRoot("login_form");
     }
 
     private static void showAlert(Alert.AlertType alertType, Window owner, String title, String message) {

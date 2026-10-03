@@ -1,0 +1,21 @@
+<?import javafx.scene.layout.VBox?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.control.Button?>
+<VBox fx:controller="com.db440.WelcomeController"
+    xmlns:fx="http://javafx.com/fxml" alignment="center" spacing="20">
+    <padding>
+        <Insets top="40" right="40" bottom="40" left="40"/>
+    </padding>
+    <!-- Filled in by WelcomeController.setUser -->
+    <Label fx:id="welcomeLabel" text="Welcome">
+        <font>
+            <Font name="Arial" size="24" ></Font>
+        </font>
+    </Label>
+    <Label text="You are logged in."/>
+    <!-- Add Logout Button -->
+    <Button text="Logout" prefWidth="100" prefHeight="40"
+            onAction="#logout"/>
+</VBox>
