@@ -3,7 +3,7 @@ Project for COMP 440:Database Design
 
 ## Phase 1 ( Due Oct 4th ) 
 
-[Phase 1 demo video ](https://youtu.be/aYQ9ZjKo88E)
+[Phase 1 demo video ](https://youtu.be/7HrhmnZ-Bko)
 
  1. Create a database schema. 
     - The schema of the user table should be:user(username, password, firstName, lastName, email, phone)
