@@ -62,12 +62,12 @@ public class LoginController {
         }
 
         try {
-            WelcomeController welcome = App.setRoot("welcome");
-            welcome.setUser(username);
+            MainPageController mainPage = App.setRoot("main_page");
+            mainPage.setUser(username);
         } catch (IOException e) {
             e.printStackTrace();
             showAlert(Alert.AlertType.ERROR, owner, "Error!",
-                "Could not open the welcome page.");
+                "Could not open the main page.");
         }
     }
 
