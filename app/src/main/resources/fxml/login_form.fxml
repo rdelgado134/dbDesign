@@ -1,61 +1,56 @@
-<?import javafx.scene.layout.GridPane?>
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.VBox?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Hyperlink?>
-<GridPane fx:controller="com.db440.LoginController"
-    xmlns:fx="http://javafx.com/fxml" alignment="center"
-          hgap="10" vgap="10">
+
+<VBox fx:controller="com.db440.LoginController"
+      xmlns:fx="http://javafx.com/fxml"
+      alignment="CENTER"
+      spacing="12">
+
     <padding>
         <Insets top="40" right="40" bottom="40" left="40"/>
     </padding>
-    <columnConstraints>
-        <ColumnConstraints minWidth="100" prefWidth="100"
-                           maxWidth="Infinity" halignment="RIGHT"></ColumnConstraints>
-        <ColumnConstraints minWidth="200" prefWidth="200"
-                           maxWidth="Infinity" hgrow="ALWAYS"></ColumnConstraints>
-    </columnConstraints>
-    <!-- Add Header Label -->
-    <Label text="Login" GridPane.columnIndex="0"
-           GridPane.rowIndex="0" GridPane.columnSpan="2"
-           GridPane.rowSpan="1" GridPane.halignment="CENTER" >
+
+    <!-- Header -->
+    <Label text="Login">
         <font>
-            <Font name="Arial" size="24" ></Font>
+            <Font name="Arial Bold" size="24"/>
         </font>
-        <GridPane.margin>
-            <Insets top="20" right="0" bottom="20" left="0"></Insets>
-        </GridPane.margin>
+        <VBox.margin>
+            <Insets bottom="10"/>
+        </VBox.margin>
     </Label>
-    <!-- Add Username Label -->
-    <Label text="Username : " GridPane.columnIndex="0"
-           GridPane.rowIndex="1" ></Label>
-    <!-- Add Username Text Field -->
-    <TextField fx:id="usernameField" prefHeight="40"
-               GridPane.columnIndex="1" GridPane.rowIndex="1"/>
-    <!-- Add Password Label -->
-    <Label text="Password : " GridPane.columnIndex="0"
-           GridPane.rowIndex="2" ></Label>
-    <!-- Add Password Field -->
-    <PasswordField fx:id="passwordField" prefHeight="40"
-                   GridPane.columnIndex="1" GridPane.rowIndex="2"/>
-    <!-- Add Login Button -->
+
+    <!-- Username Section -->
+    <VBox spacing="4" maxWidth="300" alignment="CENTER_LEFT">
+        <Label text="Username:"/>
+        <TextField fx:id="usernameField" prefHeight="38" promptText="Enter your username"/>
+    </VBox>
+
+    <!-- Password Section -->
+    <VBox spacing="4" maxWidth="300" alignment="CENTER_LEFT">
+        <Label text="Password:"/>
+        <PasswordField fx:id="passwordField" prefHeight="38" promptText="Enter your password"/>
+    </VBox>
+
+    <!-- Login Button -->
     <Button fx:id="loginButton" text="Login"
-            prefWidth="100" prefHeight="40" defaultButton="true"
-            GridPane.columnIndex="0" GridPane.rowIndex="3"
-            GridPane.columnSpan="2" GridPane.rowSpan="1"
-            GridPane.halignment="CENTER"
+            maxWidth="300" prefHeight="38" defaultButton="true"
             onAction="#login">
-        <GridPane.margin>
-            <Insets top="20" right="0" bottom="0" left="0"></Insets>
-        </GridPane.margin>
+        <VBox.margin>
+            <Insets top="10"/>
+        </VBox.margin>
     </Button>
-    <!-- Add Link to Registration -->
+
+    <!-- Switch to Registration Link -->
     <Hyperlink text="Don't have an account? Create one"
-               GridPane.columnIndex="0" GridPane.rowIndex="4"
-               GridPane.columnSpan="2" GridPane.halignment="CENTER"
                onAction="#goToRegistration"/>
-</GridPane>
+
+</VBox>
