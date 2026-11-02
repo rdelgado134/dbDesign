@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.db440.ProjectSQLController">
+
+        <!-- Left panel for SQL queries -->
+        <left>
+            <VBox spacing="10">
+                <Label text="SQL Queries"/>
+                <Button text="SQL Query 1" onAction="#selectQuery1"/>
+                <Button text="SQL Query 2" onAction="#selectQuery2"/>
+                <Button text="SQL Query 3" onAction="#selectQuery3"/>
+                <Button text="SQL Query 4" onAction="#selectQuery4"/>
+                <Button text="SQL Query 5" onAction="#selectQuery5"/>
+                <Button text="SQL Query 6" onAction="#selectQuery6"/>
+                <Button text="Back" onAction="#goBack"/>
+            </VBox>
+        </left>
+
+        <!-- Center panel is to the right of the left panel, displays the contents of each button from left panel -->
+        <center>
+            <VBox spacing="10">
+                <!-- Displays which query you're on. Updated when each query is selected. -->
+                <Label fx:id="queryTitleLabel" text="Select a query to begin"/>
+
+                <!-- Displays the user inputs needed for the query, if any. Updated when each query is selected -->
+                <HBox fx:id="inputContainer" spacing="10"/>
+
+                <!-- Executes the above query. -->
+                <Button fx:id="runButton"
+                        text="Run Query" 
+                        onAction="#handleRunQuery" />
+
+                <!-- Displays the results of the completed query -->
+                <TableView fx:id="resultsTable" VBox.vgrow="ALWAYS" />
+            </VBox>
+        </center>
+</BorderPane>
+            
+
+
+
+
+
+
+
+<!-- previous version, don't delete until above version confirmed to work. -->
+<!--
+<VBox fx:controller="com.db440.ProjectSQLController"
+      xmlns:fx="http://javafx.com/fxml" 
+      alignment="CENTER" 
+      spacing="15">
+
+    <padding>
+        <Insets top="40" right="40" bottom="40" left="40"/>
+    </padding>
+
+    <!-- 1. Header -->
+    <Label fx:id="sqlQueries" text="SQL Queries">
+        <font>
+            <Font name="Arial" size="24"/>
+        </font>
+    </Label>
+
+    <!-- 2. Menu Buttons -->
+    <Button fx:id="query_1" text="SQL Query 1"
+            prefWidth="160" prefHeight="40"
+            onAction="#goToQuery1"/>
+
+    <Button fx:id="query_2" text="SQL Query 2"
+            prefWidth="160" prefHeight="40"
+            onAction="#goToQuery2"/>
+
+    <Button fx:id="query_3" text="SQL Query 3"
+            prefWidth="160" prefHeight="40"
+            onAction="#goToQuery3"/>
+
+    <Button fx:id="query_4" text="SQL Query 4"
+            prefWidth="160" prefHeight="40"
+            onAction="#goToQuery4"/>
+
+    <Button fx:id="query_5" text="SQL Query 5"
+            prefWidth="160" prefHeight="40"
+            onAction="#goToQuery5"/>
+
+    <Button fx:id="query_6" text="SQL Query 6"
+            prefWidth="160" prefHeight="40"
+            onAction="#goToQuery6"/>
+
+    <!-- 3. Spacer to separate the actions from back button -->
+    <Region prefHeight="20"/>
+
+    <!-- 4. Back Button -->
+    <Button text="Back"
+            prefWidth="160" prefHeight="40"
+            onAction="#back"/>
+
+</VBox>
+-->

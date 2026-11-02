@@ -36,7 +36,8 @@ CREATE TABLE itemCategory (
     item_id INT NOT NULL,
     category_name VARCHAR(50) NOT NULL,
     PRIMARY KEY (item_id, category_name),
-    FOREIGN KEY (item_id) REFERENCES item(item_id) ON DELETE CASCADE
+    FOREIGN KEY (item_id) REFERENCES item(item_id) ON DELETE CASCADE,
+    CHECK (category_name REGEXP '^[a-z]+$')
 );
 
 CREATE TABLE review (
