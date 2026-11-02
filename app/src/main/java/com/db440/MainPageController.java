@@ -23,17 +23,17 @@ public class MainPageController {
 
     @FXML 
     public void goToMyItems(ActionEvent event) throws IOException { 
-        App.setRoot("myItems");
+        App.setRoot("my_items");
     }
 
     @FXML 
     public void goToItemBrowser(ActionEvent event) throws IOException { 
-        App.setRoot("itemBrowser");
+        App.setRoot("item_browser");
     }
 
     @FXML 
     public void goToProjectSQLQueries(ActionEvent event) throws IOException { 
-        App.setRoot("projectSQLQueries");
+        App.setRoot("project_sql_queries");
     }
 
     @FXML
