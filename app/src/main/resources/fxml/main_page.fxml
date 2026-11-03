@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.control.Button?>
+
+<VBox fx:controller="com.db440.MainPageController"
+      xmlns:fx="http://javafx.com/fxml" 
+      alignment="CENTER" 
+      spacing="15">
+
+    <padding>
+        <Insets top="40" right="40" bottom="40" left="40"/>
+    </padding>
+
+    <!-- 1. Header -->
+    <Label fx:id="welcomeLabel" text="Welcome">
+        <font>
+            <Font name="Arial" size="24"/>
+        </font>
+    </Label>
+
+    <!-- 2. Menu Buttons -->
+    <Button fx:id="myItemsButton" text="My Items"
+            prefWidth="160" prefHeight="40"
+            onAction="#goToMyItems"/>
+
+    <Button fx:id="itemBrowser" text="Item Browser"
+            prefWidth="160" prefHeight="40"
+            onAction="#goToItemBrowser"/>
+
+    <Button fx:id="projectSQLQueries" text="Project SQL Queries"
+            prefWidth="160" prefHeight="40"
+            onAction="#goToProjectSQLQueries"/>
+
+    <!-- 3. Spacer to separate the actions from logout -->
+    <Region prefHeight="20"/>
+
+    <!-- 4. Logout Button -->
+    <Button text="Logout"
+            prefWidth="160" prefHeight="40"
+            onAction="#logout"/>
+
+</VBox>

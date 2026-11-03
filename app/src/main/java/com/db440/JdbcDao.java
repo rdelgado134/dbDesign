@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.Optional;
 
 public class JdbcDao {
@@ -88,6 +89,30 @@ public class JdbcDao {
     private static String envOrDefault(String name, String defaultValue) {
         String value = System.getenv(name);
         return (value == null || value.isEmpty()) ? defaultValue : value;
+    }
+
+    public QueryResult executeQuery1() { //TODO
+        return null;
+    }
+
+    public QueryResult executeQuery2(String category1, String category2) { //TODO
+        return null;
+    }
+
+    public QueryResult executeQuery3(String username) { //TODO
+        return null;
+    }
+
+    public QueryResult executeQuery4(LocalDate date) { //TODO
+        return null;
+    }
+
+    public QueryResult executeQuery5() { //TODO
+        return null;
+    }
+
+    public QueryResult executeQuery6() { //TODO
+        return null;
     }
 
     public static void printSQLException(SQLException ex) {
