@@ -1,11 +1,16 @@
 package com.db440;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 public class JdbcDao {
@@ -26,6 +31,38 @@ public class JdbcDao {
     private static final String EMAIL_EXISTS_QUERY = "SELECT 1 FROM `user` WHERE email = ?";
     private static final String PHONE_EXISTS_QUERY = "SELECT 1 FROM `user` WHERE phone = ?";
     private static final String FIND_PASSWORD_HASH_QUERY = "SELECT password FROM `user` WHERE username = ?";
+
+    // Each listing row comes back with its categories joined as "books,gaming".
+    private static final String SELECT_ITEMS =
+        "SELECT i.item_id, i.seller_username, i.title, i.description, i.date_posted, i.price, "
+            + "GROUP_CONCAT(c.category_name ORDER BY c.category_name SEPARATOR ',') AS categories "
+            + "FROM item i LEFT JOIN itemCategory c ON c.item_id = i.item_id ";
+    private static final String GROUP_AND_ORDER_ITEMS =
+        " GROUP BY i.item_id ORDER BY i.date_posted DESC, i.item_id DESC";
+    private static final String FIND_ALL_ITEMS_QUERY = SELECT_ITEMS + GROUP_AND_ORDER_ITEMS;
+    private static final String FIND_ITEMS_BY_SELLER_QUERY =
+        SELECT_ITEMS + "WHERE i.seller_username = ?" + GROUP_AND_ORDER_ITEMS;
+    private static final String FIND_ITEMS_BY_CATEGORY_QUERY =
+        SELECT_ITEMS + "WHERE i.item_id IN (SELECT item_id FROM itemCategory WHERE category_name = ?)"
+            + GROUP_AND_ORDER_ITEMS;
+
+    private static final String INSERT_ITEM_QUERY =
+        "INSERT INTO item (seller_username, title, description, price) VALUES (?, ?, ?, ?)";
+    private static final String INSERT_ITEM_CATEGORY_QUERY =
+        "INSERT INTO itemCategory (item_id, category_name) VALUES (?, ?)";
+
+    // Every change to an existing item also matches seller_username, so a user
+    // can only change their own items no matter what item_id is passed in.
+    private static final String UPDATE_ITEM_PRICE_QUERY =
+        "UPDATE item SET price = ? WHERE item_id = ? AND seller_username = ?";
+    private static final String DELETE_ITEM_REVIEWS_QUERY =
+        "DELETE r FROM review r JOIN item i ON i.item_id = r.item_id WHERE r.item_id = ? AND i.seller_username = ?";
+    private static final String DELETE_ITEM_QUERY = "DELETE FROM item WHERE item_id = ? AND seller_username = ?";
+    private static final String LOCK_OWN_ITEM_QUERY =
+        "SELECT 1 FROM item WHERE item_id = ? AND seller_username = ? FOR UPDATE";
+    private static final String COUNT_ITEM_CATEGORIES_QUERY = "SELECT COUNT(*) FROM itemCategory WHERE item_id = ?";
+    private static final String DELETE_ITEM_CATEGORY_QUERY =
+        "DELETE FROM itemCategory WHERE item_id = ? AND category_name = ?";
 
     // Every query goes through here. Callers must close the connection,
     // so always use it in a try-with-resources block.
@@ -72,6 +109,177 @@ public class JdbcDao {
             preparedStatement.setString(1, username);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 return resultSet.next() ? Optional.of(resultSet.getString("password")) : Optional.empty();
+            }
+        }
+    }
+
+    public List<Item> findAllItems() throws SQLException {
+        return findItems(FIND_ALL_ITEMS_QUERY);
+    }
+
+    public List<Item> findItemsBySeller(String seller) throws SQLException {
+        return findItems(FIND_ITEMS_BY_SELLER_QUERY, seller);
+    }
+
+    // Returns the matching items with all of their categories, not just the one searched for.
+    public List<Item> findItemsByCategory(String category) throws SQLException {
+        return findItems(FIND_ITEMS_BY_CATEGORY_QUERY, category);
+    }
+
+    /**
+     * Inserts an item and its categories as one transaction, so an item is never
+     * saved without categories. date_posted is filled in by the database.
+     */
+    public void insertItem(String seller, String title, String description, BigDecimal price,
+                           List<String> categories) throws SQLException {
+        inTransaction(connection -> {
+            int itemId;
+            try (PreparedStatement preparedStatement =
+                     connection.prepareStatement(INSERT_ITEM_QUERY, Statement.RETURN_GENERATED_KEYS)) {
+                preparedStatement.setString(1, seller);
+                preparedStatement.setString(2, title);
+                preparedStatement.setString(3, description);
+                preparedStatement.setBigDecimal(4, price);
+                preparedStatement.executeUpdate();
+                try (ResultSet keys = preparedStatement.getGeneratedKeys()) {
+                    keys.next();
+                    itemId = keys.getInt(1);
+                }
+            }
+            insertCategories(connection, itemId, categories);
+            return null;
+        });
+    }
+
+    /** Returns false if the item doesn't exist or doesn't belong to seller. */
+    public boolean updateItemPrice(int itemId, String seller, BigDecimal price) throws SQLException {
+        try (Connection connection = getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_ITEM_PRICE_QUERY)) {
+            preparedStatement.setBigDecimal(1, price);
+            preparedStatement.setInt(2, itemId);
+            preparedStatement.setString(3, seller);
+            return preparedStatement.executeUpdate() > 0;
+        }
+    }
+
+    /**
+     * Deletes one of seller's items along with its reviews. Its categories are
+     * removed by ON DELETE CASCADE. Returns false if the item isn't seller's.
+     */
+    public boolean deleteItem(int itemId, String seller) throws SQLException {
+        return inTransaction(connection -> {
+            try (PreparedStatement deleteReviews = connection.prepareStatement(DELETE_ITEM_REVIEWS_QUERY);
+                PreparedStatement deleteItem = connection.prepareStatement(DELETE_ITEM_QUERY)) {
+                deleteReviews.setInt(1, itemId);
+                deleteReviews.setString(2, seller);
+                deleteReviews.executeUpdate();
+                deleteItem.setInt(1, itemId);
+                deleteItem.setString(2, seller);
+                return deleteItem.executeUpdate() > 0;
+            }
+        });
+    }
+
+    /** Adds categories to one of seller's items. Returns false if the item isn't seller's. */
+    public boolean addCategories(int itemId, String seller, List<String> categories) throws SQLException {
+        return inTransaction(connection -> {
+            if (!lockOwnItem(connection, itemId, seller)) {
+                return false;
+            }
+            insertCategories(connection, itemId, categories);
+            return true;
+        });
+    }
+
+    /**
+     * Removes a category from one of seller's items. Returns false if the item isn't
+     * seller's, or if this is its last category, since every item needs at least one.
+     */
+    public boolean removeCategory(int itemId, String seller, String category) throws SQLException {
+        return inTransaction(connection -> {
+            if (!lockOwnItem(connection, itemId, seller)) {
+                return false;
+            }
+            try (PreparedStatement count = connection.prepareStatement(COUNT_ITEM_CATEGORIES_QUERY)) {
+                count.setInt(1, itemId);
+                try (ResultSet resultSet = count.executeQuery()) {
+                    resultSet.next();
+                    if (resultSet.getInt(1) <= 1) {
+                        return false;
+                    }
+                }
+            }
+            try (PreparedStatement delete = connection.prepareStatement(DELETE_ITEM_CATEGORY_QUERY)) {
+                delete.setInt(1, itemId);
+                delete.setString(2, category);
+                return delete.executeUpdate() > 0;
+            }
+        });
+    }
+
+    private List<Item> findItems(String query, String... parameters) throws SQLException {
+        try (Connection connection = getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            for (int i = 0; i < parameters.length; i++) {
+                preparedStatement.setString(i + 1, parameters[i]);
+            }
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                List<Item> items = new ArrayList<>();
+                while (resultSet.next()) {
+                    String categories = resultSet.getString("categories");
+                    items.add(new Item(
+                        resultSet.getInt("item_id"),
+                        resultSet.getString("seller_username"),
+                        resultSet.getString("title"),
+                        resultSet.getString("description"),
+                        resultSet.getObject("date_posted", LocalDate.class),
+                        resultSet.getBigDecimal("price"),
+                        categories == null ? List.of() : Arrays.asList(categories.split(","))));
+                }
+                return items;
+            }
+        }
+    }
+
+    private static void insertCategories(Connection connection, int itemId, List<String> categories)
+            throws SQLException {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(INSERT_ITEM_CATEGORY_QUERY)) {
+            for (String category : categories) {
+                preparedStatement.setInt(1, itemId);
+                preparedStatement.setString(2, category);
+                preparedStatement.executeUpdate();
+            }
+        }
+    }
+
+    // Locks the item's row until the transaction ends, so two category changes
+    // to the same item can't interleave. Returns false if it isn't seller's item.
+    private static boolean lockOwnItem(Connection connection, int itemId, String seller) throws SQLException {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(LOCK_OWN_ITEM_QUERY)) {
+            preparedStatement.setInt(1, itemId);
+            preparedStatement.setString(2, seller);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                return resultSet.next();
+            }
+        }
+    }
+
+    @FunctionalInterface
+    private interface TransactionWork<T> {
+        T run(Connection connection) throws SQLException;
+    }
+
+    // Commits if work finishes normally and rolls back if it throws.
+    private <T> T inTransaction(TransactionWork<T> work) throws SQLException {
+        try (Connection connection = getConnection()) {
+            connection.setAutoCommit(false);
+            try {
+                T result = work.run(connection);
+                connection.commit();
+                return result;
+            } catch (SQLException | RuntimeException e) {
+                connection.rollback();
+                throw e;
             }
         }
     }
