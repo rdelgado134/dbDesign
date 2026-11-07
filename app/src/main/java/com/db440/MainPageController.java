@@ -37,12 +37,14 @@ public class MainPageController {
     }
 
     @FXML
-    public void logout(ActionEvent event) throws IOException {
-        App.setRoot("login_form");
+    private void initialize() {
+        welcomeLabel.setText("Welcome, " + Session.getUsername() + "!");
     }
 
-    public void setUser(String username) {
-        welcomeLabel.setText("Welcome, " + username + "!");
+    @FXML
+    public void logout(ActionEvent event) throws IOException {
+        Session.logout();
+        App.setRoot("login_form");
     }
 
 }
