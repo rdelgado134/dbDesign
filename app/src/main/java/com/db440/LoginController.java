@@ -61,9 +61,9 @@ public class LoginController {
             return;
         }
 
+        Session.login(username);
         try {
-            MainPageController mainPage = App.setRoot("main_page");
-            mainPage.setUser(username);
+            App.setRoot("main_page");
         } catch (IOException e) {
             e.printStackTrace();
             showAlert(Alert.AlertType.ERROR, owner, "Error!",
