@@ -7,6 +7,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -297,6 +299,88 @@ public class JdbcDao {
     private static String envOrDefault(String name, String defaultValue) {
         String value = System.getenv(name);
         return (value == null || value.isEmpty()) ? defaultValue : value;
+    }
+
+    // ---------------------------------------------------------------------
+    // Reviews (Part 5). The daily limit, no-self-review and read-only rules are
+    // enforced by triggers in schema.sql; one review per item is a UNIQUE key.
+    // ---------------------------------------------------------------------
+
+    private static final String INSERT_REVIEW_QUERY =
+        "INSERT INTO review (reviewer_username, item_id, rating, comment) VALUES (?, ?, ?, ?)";
+    private static final String FIND_REVIEWS_FOR_ITEM_QUERY =
+        "SELECT review_id, reviewer_username, item_id, rating, comment, review_date "
+            + "FROM review WHERE item_id = ? ORDER BY review_date DESC, review_id DESC";
+    private static final String HAS_REVIEWED_QUERY =
+        "SELECT 1 FROM review WHERE reviewer_username = ? AND item_id = ?";
+
+    /** review_date is filled in by the database (today). */
+    public void insertReview(String reviewer, int itemId, String rating, String comment) throws SQLException {
+        try (Connection connection = getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(INSERT_REVIEW_QUERY)) {
+            preparedStatement.setString(1, reviewer);
+            preparedStatement.setInt(2, itemId);
+            preparedStatement.setString(3, rating);
+            preparedStatement.setString(4, comment);
+            preparedStatement.executeUpdate();
+        }
+    }
+
+    public List<Review> findReviewsForItem(int itemId) throws SQLException {
+        try (Connection connection = getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(FIND_REVIEWS_FOR_ITEM_QUERY)) {
+            preparedStatement.setInt(1, itemId);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                List<Review> reviews = new ArrayList<>();
+                while (resultSet.next()) {
+                    reviews.add(new Review(
+                        resultSet.getInt("review_id"),
+                        resultSet.getString("reviewer_username"),
+                        resultSet.getInt("item_id"),
+                        resultSet.getString("rating"),
+                        resultSet.getString("comment"),
+                        resultSet.getObject("review_date", LocalDate.class)));
+                }
+                return reviews;
+            }
+        }
+    }
+
+    public boolean hasReviewed(String reviewer, int itemId) throws SQLException {
+        try (Connection connection = getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(HAS_REVIEWED_QUERY)) {
+            preparedStatement.setString(1, reviewer);
+            preparedStatement.setInt(2, itemId);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                return resultSet.next();
+            }
+        }
+    }
+
+    /**
+     * Returns a message for the user when the database rejected a change because of
+     * a business rule, or null if the error was something else (e.g. no connection).
+     */
+    public static String ruleViolationMessage(SQLException e) {
+        String message = e.getMessage() == null ? "" : e.getMessage();
+        if ("45000".equals(e.getSQLState())) {
+            return message; // raised by a trigger in schema.sql with a readable MESSAGE_TEXT
+        }
+        if (e.getErrorCode() == 1062 && message.contains("uq_review_one_per_item")) {
+            return "You have already reviewed this item. Each user can review an item only once.";
+        }
+        if (e.getErrorCode() == 3819) { // CHECK constraint failed
+            if (message.contains("chk_review_rating")) {
+                return "Rating must be Excellent, Good, Fair or Poor.";
+            }
+            if (message.contains("chk_category_lowercase_word")) {
+                return "A category must be a single lowercase word, e.g. books.";
+            }
+            if (message.contains("chk_item_price")) {
+                return "Price cannot be negative.";
+            }
+        }
+        return null;
     }
 
     public QueryResult executeQuery1() { //TODO

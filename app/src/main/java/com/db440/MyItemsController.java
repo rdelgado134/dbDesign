@@ -101,7 +101,13 @@ public class MyItemsController {
                 click.consume();
             } catch (SQLException e) {
                 JdbcDao.printSQLException(e);
-                showDatabaseError(dialogWindow);
+                // e.g. the 2-items-per-day trigger: show its message instead of a generic error
+                String ruleMessage = JdbcDao.ruleViolationMessage(e);
+                if (ruleMessage != null) {
+                    showAlert(Alert.AlertType.ERROR, dialogWindow, "Item Not Posted", ruleMessage);
+                } else {
+                    showDatabaseError(dialogWindow);
+                }
                 click.consume();
             }
         });
@@ -228,7 +234,13 @@ public class MyItemsController {
             }
         } catch (SQLException e) {
             JdbcDao.printSQLException(e);
-            showDatabaseError(owner());
+            // the keep-one-category trigger backs up the size check above
+            String ruleMessage = JdbcDao.ruleViolationMessage(e);
+            if (ruleMessage != null) {
+                showAlert(Alert.AlertType.ERROR, owner(), "Cannot Remove Category", ruleMessage);
+            } else {
+                showDatabaseError(owner());
+            }
             return;
         }
         refresh();

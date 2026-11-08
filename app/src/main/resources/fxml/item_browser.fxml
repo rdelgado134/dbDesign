@@ -46,13 +46,15 @@
         </VBox>
     </center>
 
-    <!-- Description of the clicked item -->
+    <!-- Description of the clicked item, and a button to open its reviews -->
     <bottom>
-        <Label fx:id="descriptionLabel">
+        <HBox spacing="10" alignment="CENTER_LEFT">
             <BorderPane.margin>
                 <Insets top="10"/>
             </BorderPane.margin>
-        </Label>
+            <Label fx:id="descriptionLabel" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+            <Button fx:id="reviewsButton" text="View Reviews" onAction="#viewReviews" minWidth="-Infinity"/>
+        </HBox>
     </bottom>
 
 </BorderPane>
