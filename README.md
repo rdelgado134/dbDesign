@@ -40,6 +40,49 @@ Whenever possible, business rules should be enforced by the database (for exampl
 
 All functionality must be performed through application interface(UI).
 
+## Phase 2 submission notes
+
+**YouTube demo:** _(link)_
+
+### Documents
+- ER diagram and relational schema are submitted as separate PDFs (`ER_Diagram.pdf`, `Relational_Schema.pdf`). The relational schema PDF also contains the ER-to-table mapping and the rule-enforcement table.
+
+### Running Phase 2
+1. Rebuild the database so the new constraints and triggers are installed. In Workbench run
+   `DROP DATABASE comp440;` then run all of `app/src/main/resources/sql/schema.sql`.
+2. Load the demo data: run `app/src/main/resources/sql/seed.sql`. It is safe to re-run.
+   Demo users `alice`, `bob`, `carol`, `dave`, `erin`, `frank` all use the password **`Password1!`**.
+   The top of `seed.sql` lists the expected result of every query.
+3. Start the app as usual (`.\mvnw.cmd clean javafx:run` / `./mvnw clean javafx:run` in `app/`).
+
+Pages: **My Items** (post item, update price, delete, add/remove categories) ·
+**Item Browser** (all items, search by category, **View Reviews** → read and write reviews) ·
+**Project SQL Queries** (Queries 1–6).
+
+### Where each business rule is enforced
+| Business rule | Enforced by |
+|---|---|
+| Unique username, email, phone | DB: `PRIMARY KEY (username)`, `UNIQUE (email)`, `UNIQUE (phone)` |
+| At most 2 items per user per calendar day | DB: trigger `trg_item_max_two_per_day` |
+| Every item has 1+ categories | DB: item and categories inserted in one transaction; trigger `trg_itemcategory_keep_one` blocks removing the last one |
+| Category is one lowercase word | DB: `CHECK chk_category_lowercase_word` (case-sensitive) |
+| At most 2 reviews per user per calendar day | DB: trigger `trg_review_max_two_per_day` |
+| One review per user per item | DB: `UNIQUE (reviewer_username, item_id)` |
+| Cannot review your own item | DB: trigger `trg_review_not_own_item` |
+| Rating is Excellent / Good / Fair / Poor | DB: `CHECK chk_review_rating` |
+| Reviews cannot be modified | DB: trigger `trg_review_read_only`; the app has no edit option |
+| Only the seller can update or delete an item | App: every `UPDATE`/`DELETE` includes `WHERE seller_username = ?` with the logged-in user |
+
+When the database rejects a change, the app shows the trigger's or constraint's message
+(e.g. "You can post at most 2 items per day").
+
+### Design decisions
+- **Review limit:** the assignment lists both 2 and 3 reviews per day; per the instructor we use **2**.
+- **Categories** are a multivalued attribute of Item in the ER diagram, stored in `itemCategory`.
+- **Deleting an item** also deletes its categories and reviews (`ON DELETE CASCADE`).
+- **Query 2:** the two items must be different items. X and Y may be the same category
+  (then the user needs two different items in that category on the same day).
+- **Query 6:** lists users who have posted at least one item; users who never posted anything are not included.
 
 ## Phase 1 ( Due Oct 4th ) 
 
