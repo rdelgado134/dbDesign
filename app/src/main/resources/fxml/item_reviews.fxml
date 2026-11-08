@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane fx:controller="com.db440.ItemReviewsController"
+            xmlns:fx="http://javafx.com/fxml">
+
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <!-- Header: back, page title, the item being reviewed -->
+    <top>
+        <VBox spacing="5">
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Button text="Back" onAction="#goBack"/>
+                <Label text="Reviews">
+                    <font>
+                        <Font name="Arial Bold" size="20"/>
+                    </font>
+                </Label>
+            </HBox>
+            <Label fx:id="itemLabel"/>
+            <Label fx:id="descriptionLabel"/>
+            <BorderPane.margin>
+                <Insets bottom="10"/>
+            </BorderPane.margin>
+        </VBox>
+    </top>
+
+    <!-- Existing reviews, newest first: [rating] reviewer, date: comment -->
+    <center>
+        <ListView fx:id="reviewList"/>
+    </center>
+
+    <!-- New review form. Disabled for the seller and for users who already reviewed. -->
+    <bottom>
+        <VBox spacing="8">
+            <BorderPane.margin>
+                <Insets top="10"/>
+            </BorderPane.margin>
+            <Label fx:id="formStatusLabel"/>
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="Rating:"/>
+                <ComboBox fx:id="ratingBox" promptText="Choose a rating"/>
+            </HBox>
+            <TextArea fx:id="commentArea" promptText="Short comment" prefRowCount="2" wrapText="true"/>
+            <HBox alignment="CENTER_RIGHT">
+                <Button fx:id="submitButton" text="Submit Review" onAction="#submitReview"/>
+            </HBox>
+        </VBox>
+    </bottom>
+
+</BorderPane>

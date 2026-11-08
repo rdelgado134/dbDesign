@@ -65,8 +65,9 @@ final class ItemInput {
 
     /**
      * Parses a comma-separated list such as "Electronics, gaming" into ["electronics", "gaming"].
-     * Input is lowercased here because the schema's REGEXP check is case-insensitive under
-     * MySQL's default collation, so it would let "Books" through.
+     * Input is lowercased here so "Books" is accepted as "books" instead of rejected.
+     * The schema's check (chk_category_lowercase_word) is case-sensitive, so the
+     * database would refuse an uppercase category even if this step were skipped.
      */
     static List<String> categories(String raw) {
         Set<String> categories = new LinkedHashSet<>();

@@ -10,6 +10,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Button;
 import javafx.stage.Window;
 
 public class ItemBrowserController {
@@ -29,9 +30,21 @@ public class ItemBrowserController {
     private Label descriptionLabel;
 
     @FXML
+    private Button reviewsButton;
+
+    @FXML
     private void initialize() {
         ItemListings.setUp(itemList, descriptionLabel);
+        reviewsButton.disableProperty().bind(itemList.getSelectionModel().selectedItemProperty().isNull());
         showAll(null);
+    }
+
+    // Opens the selected item's reviews, where the user can also write one.
+    @FXML
+    public void viewReviews(ActionEvent event) throws IOException {
+        Item item = itemList.getSelectionModel().getSelectedItem();
+        ItemReviewsController controller = App.setRoot("item_reviews");
+        controller.setItem(item);
     }
 
     @FXML
