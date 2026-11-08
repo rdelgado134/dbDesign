@@ -116,7 +116,7 @@ The app connects to a local MySQL 8 server at `localhost:3306`, database `comp44
 1. Install MySQL Server 8 and MySQL Workbench, and make sure the MySQL service is running.
 2. In Workbench, connect to your local server as `root`, then **File → Open SQL Script...** and open
    `app/src/main/resources/sql/schema.sql`.
-3. Run the whole script (lightning bolt / Ctrl+Shift+Enter). It creates the `comp440` database and the `user` table.
+3. Run the whole script (lightning bolt / Ctrl+Shift+Enter). It creates the `comp440` database, all four tables and the business-rule triggers. Then run `seed.sql` the same way for demo data.
 4. Check it with:
 
    ```sql
