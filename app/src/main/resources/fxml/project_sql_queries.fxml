@@ -31,7 +31,7 @@
         <center>
             <VBox spacing="10">
                 <!-- Displays which query you're on. Updated when each query is selected. -->
-                <Label fx:id="queryTitleLabel" text="Select a query to begin"/>
+                <Label fx:id="queryTitleLabel" text="Select a query to begin" wrapText="true" minHeight="-Infinity"/>
 
                 <!-- Displays the user inputs needed for the query, if any. Updated when each query is selected -->
                 <HBox fx:id="inputContainer" spacing="10"/>

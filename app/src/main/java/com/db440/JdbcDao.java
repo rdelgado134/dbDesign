@@ -383,28 +383,127 @@ public class JdbcDao {
         return null;
     }
 
-    public QueryResult executeQuery1() { //TODO
-        return null;
+    // ---------------------------------------------------------------------
+    // Advanced SQL queries (Part 6). Column aliases become the table headers.
+    // ---------------------------------------------------------------------
+
+    // Q1: most expensive item(s) in each category; ties all show up because every
+    // item whose price equals its category's maximum is returned.
+    private static final String QUERY_1 =
+        "SELECT c.category_name AS `Category`, i.item_id AS `Item ID`, i.title AS `Title`, "
+            + "i.seller_username AS `Seller`, i.price AS `Price` "
+            + "FROM item i JOIN itemCategory c ON c.item_id = i.item_id "
+            + "WHERE i.price = (SELECT MAX(i2.price) FROM item i2 "
+            + "                 JOIN itemCategory c2 ON c2.item_id = i2.item_id "
+            + "                 WHERE c2.category_name = c.category_name) "
+            + "ORDER BY c.category_name, i.title";
+
+    // Q2: same seller, same day, two different items, one in category X and one in Y.
+    private static final String QUERY_2 =
+        "SELECT i1.seller_username AS `Username`, i1.date_posted AS `Date Posted`, "
+            + "i1.title AS `Item in Category X`, i2.title AS `Item in Category Y` "
+            + "FROM item i1 "
+            + "JOIN itemCategory c1 ON c1.item_id = i1.item_id AND c1.category_name = ? "
+            + "JOIN item i2 ON i2.seller_username = i1.seller_username "
+            + "            AND i2.date_posted = i1.date_posted "
+            + "            AND i2.item_id <> i1.item_id "
+            + "JOIN itemCategory c2 ON c2.item_id = i2.item_id AND c2.category_name = ? "
+            + "ORDER BY `Username`, `Date Posted`, `Item in Category X`";
+
+    // Q3: the user's items that have at least one review and no review below Good.
+    private static final String QUERY_3 =
+        "SELECT i.item_id AS `Item ID`, i.title AS `Title`, i.price AS `Price`, "
+            + "i.date_posted AS `Date Posted`, "
+            + "(SELECT COUNT(*) FROM review r WHERE r.item_id = i.item_id) AS `Reviews` "
+            + "FROM item i "
+            + "WHERE i.seller_username = ? "
+            + "AND EXISTS (SELECT 1 FROM review r WHERE r.item_id = i.item_id) "
+            + "AND NOT EXISTS (SELECT 1 FROM review r WHERE r.item_id = i.item_id "
+            + "                AND r.rating NOT IN ('Excellent', 'Good')) "
+            + "ORDER BY i.title";
+
+    // Q4: everyone whose count on that date equals the highest count (so ties all show up).
+    private static final String QUERY_4 =
+        "SELECT i.seller_username AS `Username`, COUNT(*) AS `Items Posted` "
+            + "FROM item i WHERE i.date_posted = ? "
+            + "GROUP BY i.seller_username "
+            + "HAVING COUNT(*) = (SELECT MAX(t.posted) FROM "
+            + "                   (SELECT COUNT(*) AS posted FROM item "
+            + "                    WHERE date_posted = ? GROUP BY seller_username) t) "
+            + "ORDER BY `Username`";
+
+    // Q5: has written a review, and no review they wrote is anything other than Poor.
+    private static final String QUERY_5 =
+        "SELECT u.username AS `Username`, u.firstName AS `First Name`, u.lastName AS `Last Name`, "
+            + "(SELECT COUNT(*) FROM review r WHERE r.reviewer_username = u.username) AS `Reviews Written` "
+            + "FROM `user` u "
+            + "WHERE EXISTS (SELECT 1 FROM review r WHERE r.reviewer_username = u.username) "
+            + "AND NOT EXISTS (SELECT 1 FROM review r WHERE r.reviewer_username = u.username "
+            + "                AND r.rating <> 'Poor') "
+            + "ORDER BY u.username";
+
+    // Q6: has posted at least one item, and none of their items has a Poor review.
+    // Items with no reviews pass automatically. Users who never posted are left out.
+    private static final String QUERY_6 =
+        "SELECT u.username AS `Username`, u.firstName AS `First Name`, u.lastName AS `Last Name`, "
+            + "(SELECT COUNT(*) FROM item i WHERE i.seller_username = u.username) AS `Items Posted` "
+            + "FROM `user` u "
+            + "WHERE EXISTS (SELECT 1 FROM item i WHERE i.seller_username = u.username) "
+            + "AND NOT EXISTS (SELECT 1 FROM item i JOIN review r ON r.item_id = i.item_id "
+            + "                WHERE i.seller_username = u.username AND r.rating = 'Poor') "
+            + "ORDER BY u.username";
+
+    public QueryResult executeQuery1() throws SQLException {
+        return runReport(QUERY_1);
     }
 
-    public QueryResult executeQuery2(String category1, String category2) { //TODO
-        return null;
+    public QueryResult executeQuery2(String category1, String category2) throws SQLException {
+        return runReport(QUERY_2, category1, category2);
     }
 
-    public QueryResult executeQuery3(String username) { //TODO
-        return null;
+    public QueryResult executeQuery3(String username) throws SQLException {
+        return runReport(QUERY_3, username);
     }
 
-    public QueryResult executeQuery4(LocalDate date) { //TODO
-        return null;
+    public QueryResult executeQuery4(LocalDate date) throws SQLException {
+        java.sql.Date sqlDate = java.sql.Date.valueOf(date);
+        return runReport(QUERY_4, sqlDate, sqlDate);
     }
 
-    public QueryResult executeQuery5() { //TODO
-        return null;
+    public QueryResult executeQuery5() throws SQLException {
+        return runReport(QUERY_5);
     }
 
-    public QueryResult executeQuery6() { //TODO
-        return null;
+    public QueryResult executeQuery6() throws SQLException {
+        return runReport(QUERY_6);
+    }
+
+    // Runs a read-only query and returns its column labels and rows as text for the results table.
+    private QueryResult runReport(String query, Object... parameters) throws SQLException {
+        try (Connection connection = getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            for (int i = 0; i < parameters.length; i++) {
+                preparedStatement.setObject(i + 1, parameters[i]);
+            }
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                ResultSetMetaData metaData = resultSet.getMetaData();
+                int columnCount = metaData.getColumnCount();
+                List<String> columns = new ArrayList<>();
+                for (int column = 1; column <= columnCount; column++) {
+                    columns.add(metaData.getColumnLabel(column));
+                }
+                List<List<String>> rows = new ArrayList<>();
+                while (resultSet.next()) {
+                    List<String> row = new ArrayList<>();
+                    for (int column = 1; column <= columnCount; column++) {
+                        String value = resultSet.getString(column);
+                        row.add(value == null ? "" : value);
+                    }
+                    rows.add(row);
+                }
+                return new QueryResult(columns, rows);
+            }
+        }
     }
 
     public static void printSQLException(SQLException ex) {
